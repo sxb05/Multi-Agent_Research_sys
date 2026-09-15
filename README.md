@@ -2,6 +2,10 @@
 
 A Streamlit research workspace that combines web search, webpage extraction, report generation, and critical review into one workflow.
 
+## Live Demo
+
+Try the deployed application at [multi-agent-research-sys.onrender.com](https://multi-agent-research-sys.onrender.com/).
+
 ## What It Does
 
 The system processes a research question through four stages:
