@@ -23,7 +23,7 @@ def research_pipeline(topic: str, num_results: int = 5):
     search_results = search_agent.invoke({"messages" : [("user", f"Find recent, relevant information on the topic: {topic}. Please provide the top {num_results} results with their URLs.")]
 
     })
-    state["search_results"] = search_results["messages"][-1]["content"]
+    state["search_results"] = search_results["messages"][-1].content
 
     print("/n search results:", state["search_results"])
 
@@ -42,7 +42,7 @@ def research_pipeline(topic: str, num_results: int = 5):
 
     #3 Step 3: Generate a report based on the scraped content
     research_combined = f"Research topic: {topic}\n\nScraped content:\n{state['scraped_content']}"
-    report = writer_chain.invoke({"topic": topic, "information": state["research_combined"]})["output"]
+    report = writer_chain.invoke({"topic": topic, "information": research_combined})["output"]
     state["report"] = report    
     print("\n"+"="*50)
     print("Generated report:", state["report"])
@@ -52,3 +52,5 @@ def research_pipeline(topic: str, num_results: int = 5):
     state["critique"] = critique
     print("\n"+"="*50)
     print("Critique of the report:", state["critique"])
+
+    return state

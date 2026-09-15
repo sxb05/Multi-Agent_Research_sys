@@ -6,16 +6,23 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 from langchain_tavily import TavilySearch
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from ..tools.tools import web_search, scrape_webpage
 
 load_dotenv()
 GEMINI_3_8_KEY = os.environ.get("GEMINI_3_8_KEY")
-llm = ChatGoogleGenerativeAI(
-        model="gemini-3.8-flash",
-        google_api_key = GEMINI_3_8_KEY,
-        temperature=0,
-    )
 
+llm = ChatGoogleGenerativeAI(
+        model="gemini-3.1-flash-lite",
+        google_api_key = GEMINI_3_8_KEY,
+        temperature=0.2,
+        max_retries=3,
+    )
+llm2 = ChatGroq(
+    model="openai/gpt-oss-120b",
+    api_key=os.environ.get("GROQ_API_KEY"),
+    temperature=0,
+)
 #First agent that can search the web and scrape content from a webpage
 def build_search_agent():
     return create_agent(
