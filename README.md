@@ -77,7 +77,7 @@ TAVILY_API_KEY=your_tavily_api_key
 GROQ_API_KEY=your_groq_api_key
 ```
 
-Do not commit `.env` or publish API keys. Use a secret manager for deployed environments.
+.
 
 ### 4. Start the application
 
