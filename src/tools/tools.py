@@ -1,20 +1,13 @@
 import os
 import requests
-import streamlit as st
 from dotenv import load_dotenv
-from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_tavily import TavilySearch
-from langchain_google_genai import ChatGoogleGenerativeAI
-from rich import print
-from bs4 import BeautifulSoup
-from readability import Document
 import trafilatura
-import re
 
 load_dotenv()
 TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")
-search_tool = TavilySearch(max_results=5, apikey = "TAVILY_API_KEY")
+search_tool = TavilySearch(max_results=5, apikey=TAVILY_API_KEY)
 
 @tool
 def scrape_webpage(url: str) -> str:

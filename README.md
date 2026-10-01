@@ -1,6 +1,6 @@
 # Multi-Agent Research System
 
-A Streamlit research workspace that combines web search, webpage extraction, report generation, and critical review into one workflow.
+A React and FastAPI research workspace that combines web search, webpage extraction, report generation, and critical review into one workflow.
 
 ## Live Demo
 
@@ -15,18 +15,20 @@ The system processes a research question through four stages:
 3. **Write** a structured report with Google Gemini.
 4. **Review** the report with an LLM-based critic.
 
-The Streamlit interface presents the source overview, extracted notes, report, and critique in separate views. Reports can be downloaded as Markdown files.
+The React interface presents the source overview, extracted notes, report, and critique in separate views. Reports can be downloaded as Markdown files.
 
 ## Architecture
 
 ```text
-app.py
+app.py                 FastAPI API and production static-file host
+frontend/src/          React + TypeScript interface
   -> src/pipelines/pipeline.py
        -> src/agents/agents.py
             -> src/tools/tools.py
 ```
 
-- `app.py`: Streamlit user interface and request handling.
+- `app.py`: FastAPI endpoints and built frontend hosting.
+- `frontend/src/App.tsx`: Research workspace interface.
 - `src/pipelines/pipeline.py`: Orchestrates the research stages.
 - `src/agents/agents.py`: Configures LangChain agents and report chains.
 - `src/tools/tools.py`: Provides Tavily search and webpage extraction tools.
@@ -79,11 +81,22 @@ Do not commit `.env` or publish API keys. Use a secret manager for deployed envi
 
 ### 4. Start the application
 
+Install the frontend dependencies and create its production bundle:
+
 ```bash
-streamlit run app.py
+cd frontend
+npm install
+npm run build
+cd ..
 ```
 
-Open the local URL shown by Streamlit, usually `http://localhost:8501`.
+Start the API and frontend host:
+
+```bash
+uvicorn app:app --reload
+```
+
+Open `http://localhost:8000`. During frontend development, run `npm run dev` inside `frontend`; Vite proxies `/api` requests to the FastAPI server.
 
 ## Usage
 
