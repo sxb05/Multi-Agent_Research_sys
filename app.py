@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -8,13 +9,19 @@ from pydantic import BaseModel, Field
 
 from src.pipelines.pipeline import research_pipeline
 
+logger = logging.getLogger("research-lab")
+
 
 class ResearchRequest(BaseModel):
     topic: str = Field(min_length=1, max_length=500)
     num_results: int = Field(default=5, ge=1, le=10)
 
 
-app = FastAPI(title="Research Lab API")
+app = FastAPI(
+    title="Research Lab API",
+    docs_url=None,
+    redoc_url=None,
+)
 frontend_dist = Path(__file__).parent / "frontend" / "dist"
 
 
@@ -32,9 +39,10 @@ def research(request: ResearchRequest) -> dict[str, Any]:
     try:
         return research_pipeline(topic=topic, num_results=request.num_results)
     except Exception as error:
+        logger.exception("Research pipeline failed for topic length %d", len(topic))
         raise HTTPException(
             status_code=502,
-            detail=f"The research pipeline failed: {error}",
+            detail="The research pipeline is temporarily unavailable. Please try again.",
         ) from error
 
 

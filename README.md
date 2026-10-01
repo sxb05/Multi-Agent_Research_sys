@@ -79,7 +79,7 @@ GROQ_API_KEY=your_groq_api_key
 
 .
 
-### 4. Start the application
+### 4. Start the application locally
 
 Install the frontend dependencies and create its production bundle:
 
@@ -98,6 +98,38 @@ uvicorn app:app --reload
 
 Open `http://localhost:8000`. During frontend development, run `npm run dev` inside `frontend`; Vite proxies `/api` requests to the FastAPI server.
 
+## Docker deployment
+
+The repository includes a multi-stage [`Dockerfile`](Dockerfile) that builds the React client with Node and copies only the compiled assets into a small Python runtime image. The container runs as a non-root user, exposes only port `8000`, includes a health check, and supports configurable worker concurrency.
+
+Build and run it with Docker:
+
+```bash
+docker build -t research-lab:latest .
+docker run --rm -p 8000:8000 \
+  --env-file .env \
+  -e WEB_CONCURRENCY=2 \
+  research-lab:latest
+```
+
+Or use Compose for a restart policy, read-only filesystem, and local environment loading:
+
+```bash
+docker compose up --build -d
+docker compose ps
+docker compose logs -f research-lab
+```
+
+Copy `.env` from the configuration example above before using Compose. In a hosted environment, inject secrets through the platform's secret manager instead of baking them into an image or committing them to source control.
+
+The production process is:
+
+```text
+browser -> uvicorn workers -> FastAPI API -> research pipeline -> Tavily/Gemini/Groq
+```
+
+Put a TLS-terminating reverse proxy or managed load balancer in front of the container for HTTPS, and set `WEB_CONCURRENCY` based on the available CPU and memory. The `/api/health` endpoint is safe to use for liveness/readiness checks and does not call external model providers.
+
 ## Usage
 
 1. Enter a focused research question.
@@ -110,13 +142,20 @@ Research quality depends on source availability, webpage accessibility, and the 
 
 ## Development Notes
 
-Run a syntax check before committing changes:
+Run checks before committing changes:
 
 ```bash
 python -m py_compile app.py
 ```
 
-The current console entry point in `main.py` runs a hard-coded research example. Use `app.py` for the interactive application.
+Build the production frontend and image:
+
+```bash
+cd frontend && npm ci && npm run build && cd ..
+docker build -t research-lab:local .
+```
+
+The current console entry point in `main.py` runs a hard-coded research example. Use the API application in `app.py` for the interactive application.
 
 ## License
 
