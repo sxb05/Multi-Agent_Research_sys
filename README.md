@@ -4,7 +4,7 @@ A React and FastAPI research workspace that combines web search, webpage extract
 
 ## Live Demo
 
-Try the deployed application at [multi-agent-research-sys.onrender.com](https://multi-agent-research-sys.onrender.com/).
+Try the deployed application at [multi-agent-research-sys.onrender.com](https://multi-agent-research-sys-72wp.onrender.com).
 
 ## What It Does
 
